@@ -1,0 +1,51 @@
+services:
+  # neo4j-loader:
+  #   image: neo4j:community
+  #   container_name: neo4j-loader
+  #   volumes:
+  #     # Use :z for SELinux context relabeling
+  #     - ./run/media/weare/Internals/docker-volumns/neo4j/data:/data:z
+  #     - ./run/media/weare/Internals/docker-volumns/neo4j/logs:/logs:z
+  #     - ./run/media/weare/Internals/docker-volumns/neo4j/plugins:/plugins:z
+  #     - ./run/media/weare/Internals/docker-volumns/neo4j/import:/import
+  #   # This command loads the dump and then the container exits
+  #   command: >
+  #     neo4j-admin database load neo4j --from-path=/import --overwrite-destination=true
+
+  neo4j:
+    image: neo4j:community
+    container_name: neo4j-community
+    restart: unless-stopped
+    # depends_on:
+    #   neo4j-loader:
+    #     condition: service_completed_successfully
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      # Use :z for SELinux context relabeling
+      - ./data:/data:z
+      - ./logs:/logs:z
+      - ./plugins:/plugins:z
+      - ./import:/import
+    environment:
+      - NEO4J_AUTH=neo4j/password123
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_dbms_memory_heap_initial__size=512m
+      - NEO4J_dbms_memory_heap_max__size=1G
+      - NEO4J_dbms_memory_pagecache_size=512m
+  neo4jV2:
+    image: neo4j:community
+    container_name: neo4j-community-v2
+    restart: unless-stopped
+    ports:
+      - "8474:7474"
+      - "8687:7687"
+    environment:
+      - NEO4J_AUTH=neo4j/password123
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_dbms_memory_heap_initial__size=512m
+      - NEO4J_dbms_memory_heap_max__size=1G
+      - NEO4J_dbms_memory_pagecache_size=512m
