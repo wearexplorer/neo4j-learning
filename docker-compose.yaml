@@ -1,24 +1,19 @@
 services:
-  # neo4j-loader:
-  #   image: neo4j:community
-  #   container_name: neo4j-loader
-  #   volumes:
-  #     # Use :z for SELinux context relabeling
-  #     - ./run/media/weare/Internals/docker-volumns/neo4j/data:/data:z
-  #     - ./run/media/weare/Internals/docker-volumns/neo4j/logs:/logs:z
-  #     - ./run/media/weare/Internals/docker-volumns/neo4j/plugins:/plugins:z
-  #     - ./run/media/weare/Internals/docker-volumns/neo4j/import:/import
-  #   # This command loads the dump and then the container exits
-  #   command: >
-  #     neo4j-admin database load neo4j --from-path=/import --overwrite-destination=true
+  neo4j-loader:
+    image: neo4j:community
+    container_name: neo4j-loader
+    volumes:
+      # Use :z for SELinux context relabeling
+      - ./logs:/logs:z
+    command: neo4j-admin database load neo4j --from-path=logs/dumps --overwrite-destination=true
 
   neo4j:
     image: neo4j:community
     container_name: neo4j-community
     restart: unless-stopped
-    # depends_on:
-    #   neo4j-loader:
-    #     condition: service_completed_successfully
+    depends_on:
+      neo4j-loader:
+        condition: service_completed_successfully
     ports:
       - "7474:7474"
       - "7687:7687"
